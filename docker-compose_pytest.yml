@@ -1,0 +1,38 @@
+networks:
+  local-network:
+    driver: bridge
+
+x-base: &base-backend
+  build:
+    context: .
+    dockerfile: ./Dockerfil
+  env_file:
+    - .env
+  volumes:
+    - .:/app:delegated
+  networks:
+    - local-network
+  restart: always
+
+services:
+  postgres:
+    image: library/postgres:16.4-alpine
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: easy_bill
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_password
+    networks:
+      - local-network
+
+  backend:
+    <<: *base-backend
+    build:
+      context: .
+      target: local
+    environment:
+      UNIT_TEST: True
+    command: pytest
+    depends_on:
+      - postgres

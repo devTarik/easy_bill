@@ -1,0 +1,38 @@
+networks:
+  local-network:
+    driver: bridge
+
+x-base: &base-backend
+  build:
+    context: .
+    dockerfile: ./Dockerfil
+  env_file:
+    - .env
+  volumes:
+    - .:/app:delegated
+  networks:
+    - local-network
+  restart: always
+
+services:
+  postgres:
+    image: library/postgres:16.4-alpine
+    volumes:
+      - ../pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: easy_bill
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_password
+    networks:
+      - local-network
+
+  backend:
+    <<: *base-backend
+    build:
+      context: .
+      target: local
+    ports:
+      - 8080:8080
+    command: bash -c "alembic upgrade head && gunicorn -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:8080 --workers 1"
+    depends_on:
+      - postgres

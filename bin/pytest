@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker-compose -f docker-compose_pytest.yml up --abort-on-container-exit --exit-code-from backend
+

@@ -1,0 +1,24 @@
+line-length = 120
+exclude = [".venv", ".vscode", ".idea", "migration"]
+
+[lint]
+select = ["E", "W", "I", "F", "T20", "Q", "S", "N", "C4", "ERA"]
+fixable = ["ALL"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[lint.isort]
+force-single-line = false
+
+[flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+avoid-escape = false
+
+[per-file-ignores]
+"tests/**/*.py" = ["S101", "ARG", "FBT", "PLR2004", "S311"]
